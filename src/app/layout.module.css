@@ -1,0 +1,61 @@
+.appContainer {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--background);
+}
+
+.mainContent {
+  flex: 1;
+  margin-left: 260px;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  height: 70px;
+  background-color: var(--background);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.pageHeader {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.userProfile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 500;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.pageContent {
+  padding: 32px;
+  flex: 1;
+  background-color: #f8fafc;
+}
+
+@media (prefers-color-scheme: dark) {
+  .pageContent {
+    background-color: #020617;
+  }
+}

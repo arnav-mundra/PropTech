@@ -1,0 +1,125 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  role      String   // Admin, Leasing Director, Leasing Manager, Research Analyst
+  leads     Lead[]
+  createdAt DateTime @default(now())
+}
+
+model Project {
+  id               String   @id @default(cuid())
+  name             String
+  city             String
+  developer        String
+  projectType      String   // Mall, High Street, Mixed Use, Waterfront
+  totalArea        Float
+  completionStatus String
+  floors           Floor[]
+  units            Unit[]
+  leads            Lead[]
+  deals            Deal[]
+  createdAt        DateTime @default(now())
+}
+
+model Floor {
+  id        String   @id @default(cuid())
+  name      String
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id])
+  units     Unit[]
+  createdAt DateTime @default(now())
+}
+
+model Unit {
+  id        String   @id @default(cuid())
+  unitId    String
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id])
+  floorId   String
+  floor     Floor    @relation(fields: [floorId], references: [id])
+  area      Float
+  frontage  Float?
+  category  String   // Retail, Food & Beverage, Entertainment, Anchor, Kiosk
+  status    String   // Available, Under Discussion, LOI Signed, Leased
+  leads     Lead[]
+  deals     Deal[]
+  createdAt DateTime @default(now())
+}
+
+model Brand {
+  id                String        @id @default(cuid())
+  name              String
+  category          String        // Fashion, Cafe, Restaurant, Electronics, Entertainment, Sports, Luxury
+  typicalSize       String?
+  preferredCityTier String?
+  existingLocations Int           @default(0)
+  expansionStatus   String?
+  contactPerson     String?
+  requirements      Requirement[]
+  leads             Lead[]
+  deals             Deal[]
+  createdAt         DateTime      @default(now())
+}
+
+model Requirement {
+  id                   String   @id @default(cuid())
+  brandId              String
+  brand                Brand    @relation(fields: [brandId], references: [id])
+  city                 String
+  areaRequired         String
+  preferredProjectType String
+  budgetRange          String
+  status               String   // Exploring, Actively scouting, In Discussion, Negotiation, Closed
+  createdAt            DateTime @default(now())
+}
+
+model Lead {
+  id           String    @id @default(cuid())
+  brandId      String
+  brand        Brand     @relation(fields: [brandId], references: [id])
+  projectId    String
+  project      Project   @relation(fields: [projectId], references: [id])
+  unitId       String?
+  unit         Unit?     @relation(fields: [unitId], references: [id])
+  managerId    String
+  manager      User      @relation(fields: [managerId], references: [id])
+  stage        String    // Lead Identified, Contact Made, Requirement Received, Space Shared, Site Visit, Negotiation, LOI, Lease Signed
+  nextFollowUp DateTime?
+  meetingNotes String?
+  createdAt    DateTime  @default(now())
+}
+
+model Deal {
+  id             String     @id @default(cuid())
+  brandId        String
+  brand          Brand      @relation(fields: [brandId], references: [id])
+  projectId      String
+  project        Project    @relation(fields: [projectId], references: [id])
+  unitId         String
+  unit           Unit       @relation(fields: [unitId], references: [id])
+  rent           Float
+  leaseStartDate DateTime
+  leaseTerm      Int        // In months
+  dealStatus     String
+  documents      Document[]
+  createdAt      DateTime   @default(now())
+}
+
+model Document {
+  id        String   @id @default(cuid())
+  dealId    String
+  deal      Deal     @relation(fields: [dealId], references: [id])
+  type      String   // LOI, Lease Agreement, Layout, Brand Presentation
+  fileUrl   String
+  createdAt DateTime @default(now())
+}
